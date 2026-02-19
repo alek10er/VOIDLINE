@@ -51,13 +51,86 @@ for each row execute function public.handle_new_user();
 -- RLS
 alter table public.profiles enable row level security;
 
+drop policy if exists "Profiles are viewable by owner" on public.profiles;
 create policy "Profiles are viewable by owner"
 on public.profiles
 for select
 using (auth.uid() = id);
 
+drop policy if exists "Profiles are editable by owner" on public.profiles;
 create policy "Profiles are editable by owner"
 on public.profiles
 for update
 using (auth.uid() = id)
 with check (auth.uid() = id);
+
+-- Тестовый пользователь (ТОЛЬКО ДЛЯ DEV/STAGING)
+-- Email: test@voidline.dev
+-- Password: VoidlineTest123!
+do $$
+declare
+  test_user_id uuid := '11111111-1111-4111-8111-111111111111';
+begin
+  if not exists (select 1 from auth.users where email = 'test@voidline.dev') then
+    insert into auth.users (
+      id,
+      instance_id,
+      aud,
+      role,
+      email,
+      encrypted_password,
+      email_confirmed_at,
+      raw_app_meta_data,
+      raw_user_meta_data,
+      created_at,
+      updated_at,
+      confirmation_token,
+      email_change,
+      email_change_token_new,
+      recovery_token
+    )
+    values (
+      test_user_id,
+      '00000000-0000-0000-0000-000000000000',
+      'authenticated',
+      'authenticated',
+      'test@voidline.dev',
+      crypt('VoidlineTest123!', gen_salt('bf')),
+      now(),
+      '{"provider":"email","providers":["email"]}',
+      '{"username":"voidline_test","first_name":"Test","last_name":"User"}',
+      now(),
+      now(),
+      '',
+      '',
+      '',
+      ''
+    );
+
+    insert into auth.identities (
+      id,
+      user_id,
+      identity_data,
+      provider,
+      provider_id,
+      created_at,
+      updated_at,
+      last_sign_in_at
+    )
+    values (
+      gen_random_uuid(),
+      test_user_id,
+      jsonb_build_object(
+        'sub', test_user_id::text,
+        'email', 'test@voidline.dev'
+      ),
+      'email',
+      test_user_id::text,
+      now(),
+      now(),
+      now()
+    )
+    on conflict do nothing;
+  end if;
+end;
+$$;
