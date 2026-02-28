@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: voidline-auth
+    env: python
+    plan: free
+    buildCommand: echo "No build step"
+    startCommand: python3 -m http.server $PORT

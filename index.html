@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VOIDLINE — Вход</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  </head>
+  <body>
+    <div class="bg-grid" aria-hidden="true"></div>
+    <main class="auth-shell">
+      <section class="auth-card" aria-labelledby="auth-title">
+        <div class="brand">
+          <span class="brand-dot"></span>
+          <p class="brand-title">VOIDLINE</p>
+        </div>
+
+        <h1 id="auth-title">Вход в аккаунт</h1>
+        <p class="subtitle">
+          Сдержанный темный интерфейс, высокая контрастность и мягкие анимации обработки.
+        </p>
+
+        <form id="login-form" class="login-form" novalidate>
+          <label class="field">
+            <span>Email</span>
+            <input id="email" name="email" type="email" autocomplete="email" required />
+          </label>
+
+          <label class="field">
+            <span>Пароль</span>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              autocomplete="current-password"
+              minlength="8"
+              required
+            />
+          </label>
+
+          <button id="submit-btn" type="submit" class="login-btn">
+            <span class="btn-label">Войти</span>
+            <span class="loader" aria-hidden="true"></span>
+          </button>
+        </form>
+
+        <p id="status-message" class="status-message" aria-live="polite"></p>
+      </section>
+    </main>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <section id="success-overlay" class="success-overlay" aria-live="assertive" aria-hidden="true">
+      <div class="overlay-inner">
+        <h2>Вход успешен</h2>
+        <p id="profile-output">Загрузка данных профиля...</p>
+      </div>
+    </section>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
